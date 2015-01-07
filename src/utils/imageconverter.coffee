@@ -7,12 +7,15 @@ class ImageConverter
   constructor: ({@source,@bitrate,@target,@log}) ->
     @target  ||= @source.replace /\.jpg$/, ".png"
     @bitrate ||= 128
+    
 
     switch platform()
       when "darwin"
         @pathToBin = "vendor/bin/osx/convert"
+        @profile = "vendor/bin/osx/JapanColor2011Coated.icc"
       when "win32"
         @pathToBin = "vendor/bin/win32/convert.exe"
+        @profile = "vendor/bin/win32/JapanColor2011Coated.icc"
 
     # binary may not be executable due to zip compression..
     chmodSync @pathToBin, 755
@@ -20,7 +23,7 @@ class ImageConverter
   process: ->
     @log "画像一括処理中です"
 
-    @child = spawn @pathToBin, [@source,"-colorspace","cmyk",'/Users/hoyamada/Desktop/cmyk.jpg']
+    @child = spawn @pathToBin, [@source, "-profile", @profile,"-colorspace","cmyk",'/Users/hoyamada/Desktop/JapanColor2011Coated-cmyk.jpg']
 
     @child.stdout.on "data", (data) =>
       @log "#{data}"
