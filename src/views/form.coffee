@@ -7,7 +7,7 @@ class ImageConvertFormView extends Backbone.View
 
   render: ->
     @$el.html """
-      ファイル: <input class="file" type="file" value="ファイルを選択してください"><br>
+      ファイル: <input class="file" type="file" multiple><br>
       <input type="submit" value="変換処理実施">
     """
 
