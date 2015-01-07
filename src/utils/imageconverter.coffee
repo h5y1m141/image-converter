@@ -18,9 +18,9 @@ class ImageConverter
     chmodSync @pathToBin, 755
 
   process: ->
-    @log "Starting encoding process.."
+    @log "画像一括処理中です"
 
-    @child = spawn @pathToBin, ["-colorspace","rgb",@source,"-colorspace","cmyk",@target]
+    @child = spawn @pathToBin, [@source,"-colorspace","cmyk",'/Users/hoyamada/Desktop/cmyk.jpg']
 
     @child.stdout.on "data", (data) =>
       @log "#{data}"
@@ -29,4 +29,4 @@ class ImageConverter
       @log "ERROR: #{data}"
 
     @child.on "exit", (code) =>
-      @log "Encoding process exited with code: #{code}"
+      @log "画像一括処理が終了しました。"
