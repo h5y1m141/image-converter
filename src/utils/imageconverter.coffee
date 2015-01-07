@@ -4,10 +4,8 @@
 
 
 class ImageConverter
-  constructor: ({@source,@bitrate,@target,@log}) ->
-    @target  ||= @source.replace /\.jpg$/, ".png"
-    @bitrate ||= 128
-    
+  constructor: ({@source,@log}) ->
+    @source = @source.split(";")  
 
     switch platform()
       when "darwin"
@@ -21,15 +19,19 @@ class ImageConverter
     chmodSync @pathToBin, 755
 
   process: ->
+
     @log "画像一括処理中です"
+    _.each(@source, (file, index)  =>
+      @child = spawn @pathToBin, [file, "-profile", @profile,"-colorspace","cmyk","/Users/hoyamada/Desktop/#{index}.jpg"]
 
-    @child = spawn @pathToBin, [@source, "-profile", @profile,"-colorspace","cmyk",'/Users/hoyamada/Desktop/JapanColor2011Coated-cmyk.jpg']
+      @child.stdout.on "data", (data) =>
+        @log "#{data}"
 
-    @child.stdout.on "data", (data) =>
-      @log "#{data}"
+      @child.stderr.on "data", (data) =>
+        @log "ERROR: #{data}"
 
-    @child.stderr.on "data", (data) =>
-      @log "ERROR: #{data}"
+      @child.on "exit", (code) =>
+        @log "画像一括処理が終了しました。"
 
-    @child.on "exit", (code) =>
-      @log "画像一括処理が終了しました。"
+    )
+
